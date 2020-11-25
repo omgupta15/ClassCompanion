@@ -78,7 +78,10 @@ def getFilesList():
                             key
                         ) VALUES (%s, %s)
                     """,
-                    (int(time.time()*1000), userKey,)
+                    (
+                        int(time.time()*1000),
+                        userKey,
+                    )
                 )
                 database.commit()
 
@@ -115,7 +118,10 @@ def getFilesList():
                             key
                         ) VALUES (%s, %s)
                     """,
-                    (int(time.time()*1000), userKey,)
+                    (
+                        int(time.time()*1000),
+                        userKey,
+                    )
                 )
                 database.commit()
 
@@ -128,12 +134,12 @@ def getFilesList():
 
     with getDatabase() as database:
         with database.cursor() as cursor:
-            cursor.execute("SELECT name, created FROM Files WHERE userId = %s", (userId,))
+            cursor.execute("SELECT id, name, created FROM Files WHERE userId = %s", (userId,))
             result = cursor.fetchall()
 
     return flask.jsonify({
         "status": "found",
-        "files": [{"name": name, "created": created} for name, created in result]
+        "files": [{"index": index, "fileId": fileId, "name": name, "created": created} for index, (fileId, name, created) in enumerate(result)]
     })
 
 @app.route("/updateFile", methods = ["POST"])
@@ -150,11 +156,33 @@ def getFilesList():
         return flask.redirect(project["website"])
 
     if not cookies.get("userKey"):
-        return flask.jsonify({"success": False})
+        return flask.jsonify({
+            "success": False,
+            "error": "user-not-found"
+        })
 
     try:
         data = json.loads(data)
+        fileId = data["fileId"]
         name = data["name"]
+        text = data["text"]
+    except:
+        return flask.jsonify({
+            "success": False,
+            "error": "invalid-json"
+        }), 400
+
+    if len(name) > 250:
+        return flask.jsonify({
+            "success": False,
+            "error": "name-too-long"
+        })
+
+    if len(text) > 1000000:
+        return flask.jsonify({
+            "success": False,
+            "error": "text-too-long"
+        })
 
     with getDatabase() as database:
         with database.cursor() as cursor:
@@ -162,12 +190,75 @@ def getFilesList():
             result = cursor.fetchone()
 
     if not result:
-        return flask.jsonify({"success": False})
+        return flask.jsonify({
+            "success": False,
+            "error": "user-not-found"
+        })
 
     userId = result[0]
 
-def generateKey(size):
-    return "".join([random.choice(string.ascii_letters + string.digits + "_" + "-") for _ in range(size)])
+    # TODO: Add a check if number of files >= 100 for a user...
+    # TODO: See how to add memory limit for a certain table or database in mysql.
+
+    if fileId == None:
+        with getDatabase() as database:
+            with database.cursor() as cursor:
+                cursor.execute(
+                    """
+                        INSERT INTO Files (
+                            userId,
+                            name,
+                            created,
+                            content
+                        ) VALUES (%s, %s, %s, %s)
+                    """,
+                    (
+                        userId,
+                        name,
+                        int(time.time()*1000),
+                        text
+                    )
+                )
+                database.commit()
+
+            with database.cursor() as cursor:
+                cursor.execute("SELECT id FROM Files ORDER BY id DESC LIMIT 1")
+                fileId = cursor.fetchone()[0]
+
+    else:
+        with getDatabase() as database:
+            with database.cursor() as cursor:
+                cursor.execute("SELECT id FROM Files WHERE id = %s AND userId = %s", (fileId, userId,))
+                result = cursor.fetchone()
+
+            if not result:
+                return flask.jsonify({
+                    "success": False,
+                    "error": "file-not-found"
+                })
+
+            with database.cursor() as cursor:
+                cursor.execute(
+                    """
+                        UPDATE Files
+                        SET name = %s, content = %s
+                        WHERE id = %s AND userId = %s
+                    """,
+                    (
+                        name,
+                        text,
+                        fileId,
+                        userId,
+                    )
+                )
+                database.commit()
+
+    return flask.jsonify({
+        "success": True,
+        "fileId": fileId
+    })
+
+generateKey = lambda size: "".join([random.choice(string.ascii_letters + string.digits + "_" + "-") for _ in range(size)])
 
 ###########################################################################
 
@@ -191,7 +282,7 @@ with getDatabase() as database:
         cursor.execute("""
             CREATE TABLE Users (
                 id BIGINT PRIMARY KEY AUTO_INCREMENT,
-                created BIGINT,
+                created BIGINT, -- milliseconds
                 userKey TEXT
             )
         """)
@@ -207,7 +298,7 @@ with getDatabase() as database:
                 id BIGINT PRIMARY KEY AUTO_INCREMENT,
                 userId BIGINT,
                 name TEXT,
-                created BIGINT,
+                created BIGINT, -- milliseconds
                 content LONGTEXT
             )
         """)
