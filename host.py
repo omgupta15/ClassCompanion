@@ -144,7 +144,7 @@ def getFilesList():
 
 @app.route("/updateFile", methods = ["POST"])
 @limiter.limit("1/second")
-def getFilesList():
+def updateFile():
     args = flask.request.args
     data = flask.request.get_data(as_text = True)
     headers = flask.request.headers
