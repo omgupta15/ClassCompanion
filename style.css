@@ -1,0 +1,12 @@
+.row-2 > div {
+    overflow-y: scroll;
+}
+.row.one-third {
+    height: 30vh;
+}
+.row.two-thirds {
+    height: 70vh;
+}
+.row.full {
+    height: 100vh;
+}
