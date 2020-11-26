@@ -294,6 +294,45 @@ var setCookie = function(cookieName, cookieValue, expiryDays = 300) {
     document.cookie = cookieName + "=" + cookieValue + ";" + expires + ";path=/";
 };
 
+var urlBox = document.getElementById("urlBox");
+var connectButton = document.getElementById("connectButton");
+var meetingFrame = document.getElementById("meetingFrame");
 
+urlBox.addEventListener("keypress", function(event) {
+    if (event.key == "Enter" || event.keyCode == 13) {
+        connectButton.click();
+    }
+});
+
+connectButton.addEventListener("click", function() {
+    if (!urlBox.value) {
+        return Swal.fire(
+            "Enter a URL",
+            "Please enter a valid URL to connect.",
+            "error"
+        );
+    }
+    try {
+        new URL(urlBox.value);
+    }
+    catch (e) {
+        return Swal.fire(
+            "Invalid URL",
+            "Please enter a valid URL to connect.",
+            "error"
+        );
+    }
+    connectButton.disabled = true;
+    meetingFrame.innerHTML = `<iframe src="${urlBox.value}" style="min-width: 100%; height: 70vh;"></iframe>`;
+    Swal.fire({
+        title: 'Starting the connection...',
+        timer: 1000,
+        showConfirmButton: false,
+        willOpen: () => {
+            Swal.showLoading();
+        },
+        willClose: () => {}
+    }).then((result) => {});
+});
 
 reloadNotes();

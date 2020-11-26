@@ -12,17 +12,20 @@
             <div class="col-md-7">
                 <div class="row row-2 two-thirds" style="border: 3px solid black;">
                     <div style="min-width: 100%" id="meetingFrame">
-                        <div class="card" style="margin: 1.05rem; border: 1px solid black;">
+                        <div class="card" style="margin: 1.05rem; border: 1px solid black; text-align: center;">
                             <div class="card-header" style="text-align: center;">
                                 <h3>Join a meeting</h3>
                             </div>
                             <div class="card-body">
                                 <div class="form-group">
-                                    <input class="form-control" type="url" name="url" id="url" placeholder="Enter URL">
+                                    <input class="form-control" type="url" name="url" id="urlBox" placeholder="Enter URL">
                                 </div>
-                                    <button class="form-control btn btn-outline-dark">
-                                        <i class="fas fa-link"></i>&nbsp; <strong>Connect</strong>
-                                    </button>
+                                <button class="form-control btn btn-outline-dark mb-3" id="connectButton">
+                                    <i class="fas fa-link"></i>&nbsp; <strong>Connect</strong>
+                                </button>
+                                <span style="color: red; text-align: center; font-weight: bold;">
+                                    <i class="far fa-exclamation-triangle"></i>&nbsp; Some services might not allow framing. If the connection fails, this means the service doesn't allow frame.
+                                </span>
                             </div>
                         </div>
                     </div>
