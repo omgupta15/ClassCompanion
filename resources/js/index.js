@@ -352,4 +352,5 @@ connectButton.addEventListener("click", function() {
     }).then((result) => {});
 });
 
+$('[data-toggle="tooltip"]').tooltip();
 reloadNotes();
