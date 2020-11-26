@@ -1,7 +1,7 @@
-# [Class Companion](https://classcompanion.us.to "Class Companion Website")
+# [Class Companion](https://classcompanion.us.to/ "Class Companion Website")
 Class Companion is a service using which you can easily make notes while attending online classes without the hassle of switching tabs or windows.
 
-Website URL: https://classcompanion.us.to
+Website URL: https://classcompanion.us.to/
 
 # Features
 
