@@ -322,6 +322,24 @@ def updateFile():
         "fileId": fileId
     })
 
+@app.route("/<url>")
+def github(url):
+    # For making these URLs Case-Insensitive
+    url = url.lower()
+
+    if url == "github":
+        return flask.redirect("https://github.com/omgupta15/ClassCompanion", code = 301)
+
+    if url in ("ppt", "presentation",):
+        with open("ClassCompanion-IncubatedInd-Presentation.pdf", "rb") as f:
+            content = f.read()
+        response = flask.make_response(content, 200)
+        response.headers["Content-type"] = "application/pdf"
+        response.headers["Content-disposition"] = "inline; filename=ClassCompanion-IncubatedInd-Presentation.pdf"
+        return response
+
+    return flask.abort(404)
+
 generateKey = lambda size: "".join([random.choice(string.ascii_letters + string.digits + "_" + "-") for _ in range(size)])
 
 # app.run(port = 80, debug = True)
@@ -341,9 +359,9 @@ waitress.serve(app, host = project["ip"], port = project["port"])
 # CREATING THE TABLES:
 
 # with getDatabase() as database:
-#     with database.cursor() as cursor:
-#         cursor.execute("DROP TABLE Users;")
-#         database.commit()
+#     # with database.cursor() as cursor:
+#     #     cursor.execute("DROP TABLE Users;")
+#     #     database.commit()
 
 #     with database.cursor() as cursor:
 #         cursor.execute("""
@@ -355,9 +373,9 @@ waitress.serve(app, host = project["ip"], port = project["port"])
 #         """)
 #         database.commit()
 
-#     with database.cursor() as cursor:
-#         cursor.execute("DROP TABLE Files;")
-#         database.commit()
+#     # with database.cursor() as cursor:
+#     #     cursor.execute("DROP TABLE Files;")
+#     #     database.commit()
     
 #     with database.cursor() as cursor:
 #         cursor.execute("""
@@ -370,5 +388,3 @@ waitress.serve(app, host = project["ip"], port = project["port"])
 #             )
 #         """)
 #         database.commit()
-
-
