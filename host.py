@@ -139,7 +139,7 @@ def getFilesList():
 
     return flask.jsonify({
         "status": "found",
-        "files": [{"index": index, "fileId": fileId, "name": name, "created": created} for index, (fileId, name, created) in enumerate(result)]
+        "files": [{"index": index+1, "fileId": fileId, "name": name, "created": created} for index, (fileId, name, created) in enumerate(result)]
     })
 
 @app.route("/updateFile", methods = ["POST"])
@@ -260,6 +260,8 @@ def updateFile():
 
 generateKey = lambda size: "".join([random.choice(string.ascii_letters + string.digits + "_" + "-") for _ in range(size)])
 
+app.run(port = 80, debug = True)
+
 ###########################################################################
 
 # CREATING THE DATABASE:
@@ -273,35 +275,35 @@ generateKey = lambda size: "".join([random.choice(string.ascii_letters + string.
 
 # CREATING THE TABLES:
 
-with getDatabase() as database:
-    with database.cursor() as cursor:
-        cursor.execute("DROP TABLE Users;")
-        database.commit()
+# with getDatabase() as database:
+#     with database.cursor() as cursor:
+#         cursor.execute("DROP TABLE Users;")
+#         database.commit()
 
-    with database.cursor() as cursor:
-        cursor.execute("""
-            CREATE TABLE Users (
-                id BIGINT PRIMARY KEY AUTO_INCREMENT,
-                created BIGINT, -- milliseconds
-                userKey TEXT
-            )
-        """)
-        database.commit()
+#     with database.cursor() as cursor:
+#         cursor.execute("""
+#             CREATE TABLE Users (
+#                 id BIGINT PRIMARY KEY AUTO_INCREMENT,
+#                 created BIGINT, -- milliseconds
+#                 userKey TEXT
+#             )
+#         """)
+#         database.commit()
 
-    with database.cursor() as cursor:
-        cursor.execute("DROP TABLE Files;")
-        database.commit()
+#     with database.cursor() as cursor:
+#         cursor.execute("DROP TABLE Files;")
+#         database.commit()
     
-    with database.cursor() as cursor:
-        cursor.execute("""
-            CREATE TABLE Files (
-                id BIGINT PRIMARY KEY AUTO_INCREMENT,
-                userId BIGINT,
-                name TEXT,
-                created BIGINT, -- milliseconds
-                content LONGTEXT
-            )
-        """)
-        database.commit()
+#     with database.cursor() as cursor:
+#         cursor.execute("""
+#             CREATE TABLE Files (
+#                 id BIGINT PRIMARY KEY AUTO_INCREMENT,
+#                 userId BIGINT,
+#                 name TEXT,
+#                 created BIGINT, -- milliseconds
+#                 content LONGTEXT
+#             )
+#         """)
+#         database.commit()
 
 
