@@ -68,10 +68,13 @@ var reloadNotes = function() {
                 }
                 else {
                     tableBody.innerHTML = "";
+                    if (data.files.length > 2) {
+                        document.getElementById("notesTable").style.display = "block";
+                    }
                     for (let i = 0; i < data.files.length; i++) {
                         var date = new Date(data.files[i].created);
                         date = date.toString();
-                        tableBody.innerHTML += `<tr onclick="viewFile(${data.files[i].fileId})">
+                        tableBody.innerHTML += `<tr onclick="viewFile(${data.files[i].fileId});">
                             <td>${data.files[i].index}</td>
                             <td>${data.files[i].name}</td>
                             <td>${date}</td>
@@ -255,9 +258,10 @@ saveButton.addEventListener("click", function() {
                     Swal.fire({
                         position: "top-end",
                         icon: "success",
-                        title: "This note has been saved successfully.",
+                        title: "Saved",
                         showConfirmButton: false,
-                        timer: 1000
+                        timer: 750,
+                        // animation: false
                     });
                 }
                 else {

@@ -263,10 +263,7 @@ def updateFile():
         })
 
     userId = result[0]
-
-    # TODO: Add a check if number of files >= 100 for a user...
-    # TODO: See how to add memory limit for a certain table or database in mysql.
-
+    
     if fileId == None:
         with getDatabase() as database:
             with database.cursor() as cursor:
