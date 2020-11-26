@@ -43,7 +43,7 @@ def index():
     return flask.render_template("index.html", config = project)
 
 @app.route("/getFilesList", methods = ["GET"])
-@limiter.limit("3/second")
+@limiter.limit("5/second")
 def getFilesList():
     args = flask.request.args
     data = flask.request.get_data(as_text = True)
@@ -142,8 +142,67 @@ def getFilesList():
         "files": [{"index": index+1, "fileId": fileId, "name": name, "created": created} for index, (fileId, name, created) in enumerate(result)]
     })
 
+@app.route("/getFile", methods = ["POST"])
+@limiter.limit("5/second")
+def getFile():
+    args = flask.request.args
+    data = flask.request.get_data(as_text = True)
+    headers = flask.request.headers
+    cookies = flask.request.cookies
+    method = flask.request.method
+    ip = flask.request.remote_addr
+
+    if headers.get("Host") != project["host"]:
+        return flask.redirect(project["website"])
+
+    if not cookies.get("userKey"):
+        return flask.jsonify({
+            "success": False,
+            "error": "user-not-found"
+        })
+
+    try:
+        data = json.loads(data)
+        fileId = int(data["fileId"])
+    except:
+        return flask.jsonify({
+            "success": False,
+            "error": "invalid-json"
+        }), 400
+
+    with getDatabase() as database:
+        with database.cursor() as cursor:
+            cursor.execute("SELECT id FROM Users WHERE userKey = %s", (cookies.get("userKey"),))
+            result = cursor.fetchone()
+
+    if not result:
+        return flask.jsonify({
+            "success": False,
+            "error": "user-not-found"
+        })
+
+    userId = result[0]
+
+    with getDatabase() as database:
+        with database.cursor() as cursor:
+            cursor.execute("SELECT id, name, content FROM Files WHERE id = %s AND userId = %s", (fileId, userId,))
+            result = cursor.fetchone()
+
+        if not result:
+            return flask.jsonify({
+                "success": False,
+                "error": "file-not-found"
+            })
+
+    return flask.jsonify({
+        "success": True,
+        "fileId": result[0],
+        "name": result[1],
+        "content": result[2]
+    })
+
 @app.route("/updateFile", methods = ["POST"])
-@limiter.limit("1/second")
+@limiter.limit("5/second")
 def updateFile():
     args = flask.request.args
     data = flask.request.get_data(as_text = True)
