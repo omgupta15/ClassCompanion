@@ -1,5 +1,5 @@
 .row-2 > div {
-    overflow-y: scroll;
+    overflow-y: hidden;
 }
 .row.one-third {
     height: 30vh;
