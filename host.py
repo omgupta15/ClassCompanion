@@ -40,10 +40,10 @@ def index():
     if headers.get("Host") != project["host"]:
         return flask.redirect(project["website"])
 
-    return flask.render_template("index.html")
+    return flask.render_template("index.html", config = project)
 
 @app.route("/getFilesList", methods = ["GET"])
-@limiter.limit("1/second")
+@limiter.limit("3/second")
 def getFilesList():
     args = flask.request.args
     data = flask.request.get_data(as_text = True)
@@ -75,7 +75,7 @@ def getFilesList():
                     """
                         INSERT INTO Users (
                             created,
-                            key
+                            userKey
                         ) VALUES (%s, %s)
                     """,
                     (
@@ -87,7 +87,7 @@ def getFilesList():
 
         return flask.jsonify({
             "status": "not-found",
-            "key": userKey
+            "userKey": userKey
         })
 
     with getDatabase() as database:
@@ -115,7 +115,7 @@ def getFilesList():
                     """
                         INSERT INTO Users (
                             created,
-                            key
+                            userKey
                         ) VALUES (%s, %s)
                     """,
                     (
@@ -127,7 +127,7 @@ def getFilesList():
 
         return flask.jsonify({
             "status": "not-found",
-            "key": userKey
+            "userKey": userKey
         })
 
     userId = result[0]
@@ -164,13 +164,21 @@ def updateFile():
     try:
         data = json.loads(data)
         fileId = data["fileId"]
-        name = data["name"]
-        text = data["text"]
+        name = str(data["name"])
+        text = str(data["text"])
+        if fileId != None:
+            fileId = int(fileId)
     except:
         return flask.jsonify({
             "success": False,
             "error": "invalid-json"
         }), 400
+
+    if not name:
+        return flask.jsonify({
+            "success": False,
+            "error": "no-name"
+        })
 
     if len(name) > 250:
         return flask.jsonify({
