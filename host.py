@@ -12,19 +12,19 @@ def getDatabase():
         database = "ClassCompanion"
     )
 
-app = flask.Flask(__name__, template_folder = ".", static_folder = "resources/")
+app = flask.Flask(__name__, template_folder = ".") #, static_folder = "resources/") # using cdn from nginx
 
-# def get_remote_address():
-#     return flask.request.headers.get("X-Real-IP") # Using proxy_pass in nginx & setting header for real ip.
+def get_remote_address():
+    return flask.request.headers.get("X-Real-IP") # Using proxy_pass in nginx & setting header for real ip.
 
 limiter = flask_limiter.Limiter(app, key_func = get_remote_address)
 
 project = {
     "name": "Class Companion",
-    "website": "http://localhost/", #"http://classcompanion.us.to/",
-    "host": "localhost", #"classcompanion.us.to",
+    "website": "https://classcompanion.us.to/",
+    "host": "classcompanion.us.to",
     "ip": "0.0.0.0",
-    "port": 80 # 1516
+    "port": 1516
 }
 
 @app.route("/", methods = ["GET"])
@@ -263,7 +263,7 @@ def updateFile():
         })
 
     userId = result[0]
-    
+
     if fileId == None:
         with getDatabase() as database:
             with database.cursor() as cursor:
@@ -324,7 +324,8 @@ def updateFile():
 
 generateKey = lambda size: "".join([random.choice(string.ascii_letters + string.digits + "_" + "-") for _ in range(size)])
 
-app.run(port = 80, debug = True)
+# app.run(port = 80, debug = True)
+waitress.serve(app, host = project["ip"], port = project["port"])
 
 ###########################################################################
 
