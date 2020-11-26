@@ -62,7 +62,7 @@ var reloadNotes = function() {
                 console.log(data);
                 var tableBody = document.getElementById("tableBody");
                 if (data.files.length == 0) {
-                    tableBody.innerHTML = `<tr>
+                    tableBody.innerHTML = `<tr class="notes-row">
                         <td colspan="3">No notes created! Click the button below to start creating notes.</td>
                     </tr>`;
                 }
@@ -74,7 +74,7 @@ var reloadNotes = function() {
                     for (let i = 0; i < data.files.length; i++) {
                         var date = new Date(data.files[i].created);
                         date = date.toString();
-                        tableBody.innerHTML += `<tr onclick="viewFile(${data.files[i].fileId});">
+                        tableBody.innerHTML += `<tr class="notes-row" onclick="viewFile(${data.files[i].fileId});">
                             <td>${data.files[i].index}</td>
                             <td>${data.files[i].name}</td>
                             <td>${date}</td>
@@ -352,5 +352,13 @@ connectButton.addEventListener("click", function() {
     }).then((result) => {});
 });
 
+var windowResized = function() {
+    var height = window.innerHeight;
+    var elementHeight = height - content.getBoundingClientRect().y - 25;
+    content.style.height = elementHeight + "px";
+};
+window.onresize = windowResized;
+
 $('[data-toggle="tooltip"]').tooltip();
 reloadNotes();
+windowResized();

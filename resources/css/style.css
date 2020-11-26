@@ -13,3 +13,11 @@
 .row.full {
     height: 100vh;
 }
+
+.notes-row:hover {
+    cursor: pointer;
+}
+
+html, body {
+    height: 100%;
+}

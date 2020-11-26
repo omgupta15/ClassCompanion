@@ -1,8 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="icon" type="image/png" href="/resources/img/logo.png">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ config.website }}">
+    <meta property="og:title" content="{{ config.name }} - Make Notes along with class">
+    <meta property="og:description" content="{{ config.name }} is a service using which you can easily make notes while attending online classes without the hassle of switching tabs or windows.">
+    <meta property="og:image" content="{{ config.website }}resources/img/logo.png">
+
     <title>{{ config.name }} - Make Notes along with online class</title>
+
+    <link rel="icon" type="image/png" href="/resources/img/logo.png">
+    <link rel="shortcut icon" type="image/png" href="/resources/img/logo.png">
+
     <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="/resources/css/style.css">
     <link rel="stylesheet" type="text/css" href="https://kit-pro.fontawesome.com/releases/v5.15.1/css/pro.min.css">
@@ -66,7 +78,7 @@
                 </div>
                 <div class="row row-2 one-third" style="border: 3px solid black; border-top: 0px;">
                     <div style="min-width: 100%;">
-                        <table class="table table-hover" style="max-height: 21vh; overflow-y: scroll;" id="notesTable">
+                        <table class="table table-hover" style="max-height: 21vmin; overflow-y: scroll;" id="notesTable">
                             <thead><tr>
                                 <th>S.No.</th>
                                 <th>Name</th>
@@ -90,39 +102,35 @@
             </div>
             <div class="col-md-5">
                 <div class="row row-2 full" style="border: 3px solid black; border-left: 0px;">
-                    <div style="min-width: 100%">
-                        <div class="card" style="margin: 1.05rem; border: 1px solid black;">
-                            <div class="card-body">
-                                <div hidden id="fileId"></div>
-                                <div style="text-align: left;">
-                                </div>
-                                <div class="mb-3" style="text-align: right;">
-                                    <span class="btn btn-light disabled" style="opacity: 1;" id="changesInfo">
-                                        <i class="far fa-check-circle"></i>&nbsp; All Changes Saved
-                                    </span>
-                                    <button class="btn btn-outline-dark" id="copyTextButton">
-                                        <i class="far fa-copy"></i>&nbsp; Copy Text
-                                    </button>
-                                    <button class="btn btn-dark" id="saveButton">
-                                        <i class="fas fa-save"></i>&nbsp; Save
-                                    </button>
-                                </div>
-                                <div class="input-group mb-3">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text" id="noteNameLabel" style="font-weight: bold;">
-                                            Name of the Note:
-                                        </span>
-                                    </div>
-                                    <input type="text" class="form-control" placeholder="Enter Note Name" aria-label="NoteName" aria-describedby="noteNameLabel" id="noteName">
-                                </div>
-                                <div class="form-group" style="margin-bottom: 0rem;">
-                                    <label class="btn btn-light disabled" style="opacity: 1; font-size: 125%">
-                                        <i class="fal fa-file-alt"></i>&nbsp; Content:
-                                    </label>
-                                </div>
-                                <textarea style="min-width: 100%; min-height: 69vh;" id="content"></textarea>
-                            </div>
+                    <div style="width: calc(100% - 20px); box-sizing: border-box; margin: 1.05rem; flex: 0 1 auto;">
+                        <div hidden id="fileId"></div>
+                        <div style="text-align: left;">
                         </div>
+                        <div class="mb-3" style="text-align: right;">
+                            <span class="btn btn-light disabled" style="opacity: 1;" id="changesInfo">
+                                <i class="far fa-check-circle"></i>&nbsp; All Changes Saved
+                            </span>
+                            <button class="btn btn-outline-dark" id="copyTextButton">
+                                <i class="far fa-copy"></i>&nbsp; Copy Text
+                            </button>
+                            <button class="btn btn-dark" id="saveButton">
+                                <i class="fas fa-save"></i>&nbsp; Save
+                            </button>
+                        </div>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="noteNameLabel" style="font-weight: bold;">
+                                    Name of the Note:
+                                </span>
+                            </div>
+                            <input type="text" class="form-control" placeholder="Enter Note Name" aria-label="NoteName" aria-describedby="noteNameLabel" id="noteName">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0rem;">
+                            <label class="btn btn-light disabled" style="opacity: 1; font-size: 125%">
+                                <i class="fal fa-file-alt"></i>&nbsp; Content:
+                            </label>
+                        </div>
+                        <textarea style="min-width: 100%; resize: none; flex: 0 1 auto; padding: 1rem;" id="content"></textarea>
                     </div>
                 </div>
             </div>
