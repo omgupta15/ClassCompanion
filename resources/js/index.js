@@ -304,6 +304,12 @@ urlBox.addEventListener("keypress", function(event) {
     }
 });
 
+function getIdFromYouTubeUrl(url){
+    var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+    var match = url.match(regExp);
+    return (match&&match[7].length==11)? match[7] : false;
+}
+
 connectButton.addEventListener("click", function() {
     if (!urlBox.value) {
         return Swal.fire(
@@ -313,7 +319,13 @@ connectButton.addEventListener("click", function() {
         );
     }
     try {
-        new URL(urlBox.value);
+        var url = new URL(urlBox.value);
+        if (url.host == "youtu.be" || url.host == "www.youtu.be" || url.host == "youtube.com" || url.host == "www.youtube.com") {
+            var youtubeUrlId = getIdFromYouTubeUrl(urlBox.value);
+            if (youtubeUrlId) {
+                urlBox.value = `https://www.youtube.com/embed/${youtubeUrlId}?autoplay=1`;
+            }
+        }
     }
     catch (e) {
         return Swal.fire(
@@ -322,8 +334,9 @@ connectButton.addEventListener("click", function() {
             "error"
         );
     }
+    console.log(urlBox.value);
     connectButton.disabled = true;
-    meetingFrame.innerHTML = `<iframe src="${urlBox.value}" style="min-width: 100%; height: 70vh;"></iframe>`;
+    meetingFrame.innerHTML = `<iframe src="${urlBox.value}" style="min-width: 100%; height: 69.3vh;"></iframe>`;
     Swal.fire({
         title: 'Starting the connection...',
         timer: 1000,

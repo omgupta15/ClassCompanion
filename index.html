@@ -12,19 +12,52 @@
             <div class="col-md-7">
                 <div class="row row-2 two-thirds" style="border: 3px solid black;">
                     <div style="min-width: 100%" id="meetingFrame">
-                        <div class="card" style="margin: 1.05rem; border: 1px solid black; text-align: center;">
+                        <div class="card" style="margin: 1.05rem; border: 1px solid black;">
                             <div class="card-header" style="text-align: center;">
-                                <h3>Join a meeting</h3>
+                                <h3>Join a meeting or View a YouTube video</h3>
                             </div>
                             <div class="card-body">
-                                <div class="form-group">
-                                    <input class="form-control" type="url" name="url" id="urlBox" placeholder="Enter URL">
+                                <div style="text-align: center;">
+                                    <div class="form-group">
+                                        <input class="form-control" type="url" name="url" id="urlBox" placeholder="Enter URL">
+                                    </div>
+                                    <button class="form-control btn btn-outline-dark mb-3" id="connectButton">
+                                        <i class="fas fa-link"></i>&nbsp; <strong>Connect</strong>
+                                    </button>
+                                    <span style="color: red; font-weight: bold;">
+                                        <i class="far fa-exclamation-triangle"></i>&nbsp; Some services might not allow framing. If the connection fails, this means the service doesn't allow frame.
+                                    </span>
                                 </div>
-                                <button class="form-control btn btn-outline-dark mb-3" id="connectButton">
-                                    <i class="fas fa-link"></i>&nbsp; <strong>Connect</strong>
-                                </button>
-                                <span style="color: red; text-align: center; font-weight: bold;">
-                                    <i class="far fa-exclamation-triangle"></i>&nbsp; Some services might not allow framing. If the connection fails, this means the service doesn't allow frame.
+                                <span>
+                                    <strong class="btn btn-light disabled" style="opacity: 1; font-size: 125%">
+                                        Tested Services:
+                                    </strong>
+                                    <strong><ul style="font-size: 85%; list-style-type: none; padding-left: 0; margin-left: 1.5rem;">
+                                        <li>
+                                            <span style="color: green;">
+                                                <i class="fas fa-check-circle"></i>
+                                                Zoom (Meeting + Webinar)
+                                            </span>
+                                        </li>
+                                        <li>
+                                            <span style="color: green;">
+                                                <i class="fas fa-check-circle"></i>
+                                                YouTube Videos
+                                            </span>
+                                        </li>
+                                        <li>
+                                            <span style="color: red;">
+                                                <i class="fas fa-times-circle"></i>
+                                                Google Meet
+                                            </span>
+                                        </li>
+                                        <li>
+                                            <span style="color: red;">
+                                                <i class="fas fa-times-circle"></i>
+                                                Microsoft Teams
+                                            </span>
+                                        </li>
+                                    </ul></strong>
                                 </span>
                             </div>
                         </div>
