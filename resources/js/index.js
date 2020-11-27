@@ -224,7 +224,11 @@ var onUnsavedChanges = function() {
 };
 
 noteName.addEventListener("keypress", onUnsavedChanges);
+noteName.addEventListener("keyup", onUnsavedChanges);
+noteName.addEventListener("keydown", onUnsavedChanges);
 content.addEventListener("keypress", onUnsavedChanges);
+content.addEventListener("keyup", onUnsavedChanges);
+content.addEventListener("keydown", onUnsavedChanges);
 
 saveButton.addEventListener("click", function() {
     onSavingChanges();
