@@ -15,6 +15,7 @@ var disableNoteEditor = function() {
     for (var i = 0; i < elementIds.length; i++) {
         document.getElementById(elementIds[i]).disabled = true;
     }
+    windowResized();
 }
 
 var enableNoteEditor = function() {
@@ -22,6 +23,7 @@ var enableNoteEditor = function() {
     for (var i = 0; i < elementIds.length; i++) {
         document.getElementById(elementIds[i]).disabled = false;
     }
+    windowResized();
 }
 
 var disableCreateButton = function() {
@@ -29,6 +31,7 @@ var disableCreateButton = function() {
     for (var i = 0; i < elementIds.length; i++) {
         document.getElementById(elementIds[i]).disabled = true;
     }
+    windowResized();
 }
 
 var enableCreateButton = function() {
@@ -36,6 +39,7 @@ var enableCreateButton = function() {
     for (var i = 0; i < elementIds.length; i++) {
         document.getElementById(elementIds[i]).disabled = false;
     }
+    windowResized();
 }
 
 var reloadNotes = function() {
@@ -68,9 +72,7 @@ var reloadNotes = function() {
                 }
                 else {
                     tableBody.innerHTML = "";
-                    if (data.files.length > 2) {
-                        document.getElementById("notesTable").style.display = "block";
-                    }
+                    document.getElementById("notesTable").style.display = "block";
                     for (let i = 0; i < data.files.length; i++) {
                         var date = new Date(data.files[i].created);
                         date = date.toString();
@@ -205,22 +207,26 @@ var viewFile = function(fileId) {
 copyTextButton.addEventListener("click", function() {
     content.select();
     document.execCommand("copy");
+    windowResized();
 });
 
 var onSavingChanges = function() {
     changesInfo.innerHTML = savingText;
     disableCreateButton();
     disableNoteEditor();
+    windowResized();
 };
 
 var onSavedChanges = function() {
     changesInfo.innerHTML = savedText;
     saveButton.disabled = true;
+    windowResized();
 };
 
 var onUnsavedChanges = function() {
     changesInfo.innerHTML = unsavedText;
     saveButton.disabled = false;
+    windowResized();
 };
 
 noteName.addEventListener("keypress", onUnsavedChanges);
@@ -229,6 +235,9 @@ noteName.addEventListener("keydown", onUnsavedChanges);
 content.addEventListener("keypress", onUnsavedChanges);
 content.addEventListener("keyup", onUnsavedChanges);
 content.addEventListener("keydown", onUnsavedChanges);
+
+noteName.addEventListener("focus", windowResized);
+content.addEventListener("focus", windowResized);
 
 saveButton.addEventListener("click", function() {
     onSavingChanges();
