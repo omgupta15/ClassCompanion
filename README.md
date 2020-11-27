@@ -1,6 +1,8 @@
 # [Class Companion](https://classcompanion.us.to/ "Class Companion Website")
 Class Companion is a service using which you can easily make notes while attending online classes without the hassle of switching tabs or windows.
 
+The meeting/video can be viewed in a frame inside the page and users can create, edit & view their notes on the same page.
+
 Website URL: https://classcompanion.us.to/
 
 # Features
