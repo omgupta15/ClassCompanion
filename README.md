@@ -8,6 +8,8 @@ Website URL: https://classcompanion.us.to/
 # Demo:
 ![Demo](https://media4.giphy.com/media/0eu96UTCYvYBPmbvDA/giphy.gif)
 
+[Click here to view this demo as MP4 Video.](https://classcompanion.us.to/resources/video/Class%20Companion%20-%20Demo.mp4)
+
 # Features
 
 * Create unlimited notes.
