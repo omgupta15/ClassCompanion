@@ -5,6 +5,9 @@ The meeting/video can be viewed in a frame inside the page and users can create,
 
 Website URL: https://classcompanion.us.to/
 
+# Demo:
+![Demo](https://media4.giphy.com/media/0eu96UTCYvYBPmbvDA/giphy.gif)
+
 # Features
 
 * Create unlimited notes.
