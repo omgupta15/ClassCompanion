@@ -232,9 +232,13 @@ var onUnsavedChanges = function() {
 noteName.addEventListener("keypress", onUnsavedChanges);
 noteName.addEventListener("keyup", onUnsavedChanges);
 noteName.addEventListener("keydown", onUnsavedChanges);
+noteName.addEventListener("paste", onUnsavedChanges);
+noteName.addEventListener("change", onUnsavedChanges);
 content.addEventListener("keypress", onUnsavedChanges);
 content.addEventListener("keyup", onUnsavedChanges);
 content.addEventListener("keydown", onUnsavedChanges);
+content.addEventListener("paste", onUnsavedChanges);
+content.addEventListener("change", onUnsavedChanges);
 
 noteName.addEventListener("focus", windowResized);
 content.addEventListener("focus", windowResized);
