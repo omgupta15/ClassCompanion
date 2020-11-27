@@ -381,7 +381,7 @@ window.onload = function() {
     if (mobile) {
         Swal.fire(
             "Desktop Recommended",
-            "This website works best when used on a desktop computer.",
+            "This website works best when used on a computer.",
             "info"
         );              
     }
