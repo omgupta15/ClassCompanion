@@ -1,34 +1,20 @@
-import base64, json, os, math, threading, string, random, waitress
-import flask, mysql.connector, flask_limiter, time, datetime
-from flask_limiter.util import get_remote_address
-
-os.system("title ClassCompanion Host")
+import base64, json, os, math, threading, string, random
+import flask, sqlite3, time, datetime
 
 def getDatabase():
-    return mysql.connector.connect(
-        host = "localhost",
-        user = os.environ.get("MySQL_username"),
-        passwd = os.environ.get("MySQL_password"),
-        database = "ClassCompanion"
-    )
+    return sqlite3.connect("local.db")
 
-app = flask.Flask(__name__, template_folder = ".") #, static_folder = "resources/") # using cdn from nginx
-
-def get_remote_address():
-    return flask.request.headers.get("X-Real-IP") # Using proxy_pass in nginx & setting header for real ip.
-
-limiter = flask_limiter.Limiter(app, key_func = get_remote_address)
+app = flask.Flask(__name__, template_folder = ".", static_folder = "resources/")
 
 project = {
     "name": "Class Companion",
-    "website": "https://classcompanion.us.to/",
-    "host": "classcompanion.us.to",
+    "website": "http://localhost/",
+    "host": "localhost",
     "ip": "0.0.0.0",
-    "port": 1516
+    "port": 80
 }
 
 @app.route("/", methods = ["GET"])
-@limiter.limit("5/second")
 def index():
     args = flask.request.args
     data = flask.request.get_data(as_text = True)
@@ -43,7 +29,6 @@ def index():
     return flask.render_template("index.html", config = project)
 
 @app.route("/getFilesList", methods = ["GET"])
-@limiter.limit("5/second")
 def getFilesList():
     args = flask.request.args
     data = flask.request.get_data(as_text = True)
@@ -58,32 +43,32 @@ def getFilesList():
     if not cookies.get("userKey"):
         userKey = generateKey(100)
         with getDatabase() as database:
-            with database.cursor() as cursor:
-                cursor.execute("SELECT id FROM Users WHERE userKey = %s", (userKey,))
-                result = cursor.fetchone()
+            cursor = database.cursor()
+            cursor.execute("SELECT id FROM Users WHERE userKey = ?", (userKey,))
+            result = cursor.fetchone()
         
         while result:
             userKey = generateKey(100)
             with getDatabase() as database:
-                with database.cursor() as cursor:
-                    cursor.execute("SELECT id FROM Users WHERE userKey = %s", (userKey,))
-                    result = cursor.fetchone()
+                cursor = database.cursor()
+                cursor.execute("SELECT id FROM Users WHERE userKey = ?", (userKey,))
+                result = cursor.fetchone()
         
         with getDatabase() as database:
-            with database.cursor() as cursor:
-                cursor.execute(
-                    """
-                        INSERT INTO Users (
-                            created,
-                            userKey
-                        ) VALUES (%s, %s)
-                    """,
-                    (
-                        int(time.time()*1000),
-                        userKey,
-                    )
+            cursor = database.cursor()
+            cursor.execute(
+                """
+                    INSERT INTO Users (
+                        created,
+                        userKey
+                    ) VALUES (?, ?)
+                """,
+                (
+                    int(time.time()*1000),
+                    userKey,
                 )
-                database.commit()
+            )
+            database.commit()
 
         return flask.jsonify({
             "status": "not-found",
@@ -91,39 +76,39 @@ def getFilesList():
         })
 
     with getDatabase() as database:
-        with database.cursor() as cursor:
-            cursor.execute("SELECT id FROM Users WHERE userKey = %s", (cookies.get("userKey"),))
-            result = cursor.fetchone()
+        cursor = database.cursor()
+        cursor.execute("SELECT id FROM Users WHERE userKey = ?", (cookies.get("userKey"),))
+        result = cursor.fetchone()
 
     if not result:
         userKey = generateKey(100)
         with getDatabase() as database:
-            with database.cursor() as cursor:
-                cursor.execute("SELECT id FROM Users WHERE userKey = %s", (userKey,))
-                result = cursor.fetchone()
+            cursor = database.cursor()
+            cursor.execute("SELECT id FROM Users WHERE userKey = ?", (userKey,))
+            result = cursor.fetchone()
         
         while result:
             userKey = generateKey(100)
             with getDatabase() as database:
-                with database.cursor() as cursor:
-                    cursor.execute("SELECT id FROM Users WHERE userKey = %s", (userKey,))
-                    result = cursor.fetchone()
+                cursor = database.cursor()
+                cursor.execute("SELECT id FROM Users WHERE userKey = ?", (userKey,))
+                result = cursor.fetchone()
         
         with getDatabase() as database:
-            with database.cursor() as cursor:
-                cursor.execute(
-                    """
-                        INSERT INTO Users (
-                            created,
-                            userKey
-                        ) VALUES (%s, %s)
-                    """,
-                    (
-                        int(time.time()*1000),
-                        userKey,
-                    )
+            cursor = database.cursor()
+            cursor.execute(
+                """
+                    INSERT INTO Users (
+                        created,
+                        userKey
+                    ) VALUES (?, ?)
+                """,
+                (
+                    int(time.time()*1000),
+                    userKey,
                 )
-                database.commit()
+            )
+            database.commit()
 
         return flask.jsonify({
             "status": "not-found",
@@ -133,9 +118,9 @@ def getFilesList():
     userId = result[0]
 
     with getDatabase() as database:
-        with database.cursor() as cursor:
-            cursor.execute("SELECT id, name, created FROM Files WHERE userId = %s", (userId,))
-            result = cursor.fetchall()
+        cursor = database.cursor()
+        cursor.execute("SELECT id, name, created FROM Files WHERE userId = ?", (userId,))
+        result = cursor.fetchall()
 
     return flask.jsonify({
         "status": "found",
@@ -143,7 +128,6 @@ def getFilesList():
     })
 
 @app.route("/getFile", methods = ["POST"])
-@limiter.limit("5/second")
 def getFile():
     args = flask.request.args
     data = flask.request.get_data(as_text = True)
@@ -171,9 +155,9 @@ def getFile():
         }), 400
 
     with getDatabase() as database:
-        with database.cursor() as cursor:
-            cursor.execute("SELECT id FROM Users WHERE userKey = %s", (cookies.get("userKey"),))
-            result = cursor.fetchone()
+        cursor = database.cursor()
+        cursor.execute("SELECT id FROM Users WHERE userKey = ?", (cookies.get("userKey"),))
+        result = cursor.fetchone()
 
     if not result:
         return flask.jsonify({
@@ -184,9 +168,9 @@ def getFile():
     userId = result[0]
 
     with getDatabase() as database:
-        with database.cursor() as cursor:
-            cursor.execute("SELECT id, name, content FROM Files WHERE id = %s AND userId = %s", (fileId, userId,))
-            result = cursor.fetchone()
+        cursor = database.cursor()
+        cursor.execute("SELECT id, name, content FROM Files WHERE id = ? AND userId = ?", (fileId, userId,))
+        result = cursor.fetchone()
 
         if not result:
             return flask.jsonify({
@@ -202,7 +186,6 @@ def getFile():
     })
 
 @app.route("/updateFile", methods = ["POST"])
-@limiter.limit("5/second")
 def updateFile():
     args = flask.request.args
     data = flask.request.get_data(as_text = True)
@@ -252,9 +235,9 @@ def updateFile():
         })
 
     with getDatabase() as database:
-        with database.cursor() as cursor:
-            cursor.execute("SELECT id FROM Users WHERE userKey = %s", (cookies.get("userKey"),))
-            result = cursor.fetchone()
+        cursor = database.cursor()
+        cursor.execute("SELECT id FROM Users WHERE userKey = ?", (cookies.get("userKey"),))
+        result = cursor.fetchone()
 
     if not result:
         return flask.jsonify({
@@ -266,34 +249,34 @@ def updateFile():
 
     if fileId == None:
         with getDatabase() as database:
-            with database.cursor() as cursor:
-                cursor.execute(
-                    """
-                        INSERT INTO Files (
-                            userId,
-                            name,
-                            created,
-                            content
-                        ) VALUES (%s, %s, %s, %s)
-                    """,
-                    (
+            cursor = database.cursor()
+            cursor.execute(
+                """
+                    INSERT INTO Files (
                         userId,
                         name,
-                        int(time.time()*1000),
-                        text
-                    )
+                        created,
+                        content
+                    ) VALUES (?, ?, ?, ?)
+                """,
+                (
+                    userId,
+                    name,
+                    int(time.time()*1000),
+                    text
                 )
-                database.commit()
+            )
+            database.commit()
 
-            with database.cursor() as cursor:
-                cursor.execute("SELECT id FROM Files ORDER BY id DESC LIMIT 1")
-                fileId = cursor.fetchone()[0]
+            cursor = database.cursor()
+            cursor.execute("SELECT id FROM Files ORDER BY id DESC LIMIT 1")
+            fileId = cursor.fetchone()[0]
 
     else:
         with getDatabase() as database:
-            with database.cursor() as cursor:
-                cursor.execute("SELECT id FROM Files WHERE id = %s AND userId = %s", (fileId, userId,))
-                result = cursor.fetchone()
+            cursor = database.cursor()
+            cursor.execute("SELECT id FROM Files WHERE id = ? AND userId = ?", (fileId, userId,))
+            result = cursor.fetchone()
 
             if not result:
                 return flask.jsonify({
@@ -301,21 +284,21 @@ def updateFile():
                     "error": "file-not-found"
                 })
 
-            with database.cursor() as cursor:
-                cursor.execute(
-                    """
-                        UPDATE Files
-                        SET name = %s, content = %s
-                        WHERE id = %s AND userId = %s
-                    """,
-                    (
-                        name,
-                        text,
-                        fileId,
-                        userId,
-                    )
+            cursor = database.cursor()
+            cursor.execute(
+                """
+                    UPDATE Files
+                    SET name = ?, content = ?
+                    WHERE id = ? AND userId = ?
+                """,
+                (
+                    name,
+                    text,
+                    fileId,
+                    userId,
                 )
-                database.commit()
+            )
+            database.commit()
 
     return flask.jsonify({
         "success": True,
@@ -342,49 +325,31 @@ def github(url):
 
 generateKey = lambda size: "".join([random.choice(string.ascii_letters + string.digits + "_" + "-") for _ in range(size)])
 
-# app.run(port = 80, debug = True)
-waitress.serve(app, host = project["ip"], port = project["port"])
+app.run(port = 80)
+# waitress.serve(app, host = project["ip"], port = project["port"])
 
 ###########################################################################
 
-# CREATING THE DATABASE:
-
-# with getDatabase() as mysql:
-#     with mysql.cursor() as cursor:
-#         cursor.execute("CREATE DATABASE ClassCompanion")
-#         mysql.commit()
-
-###########################################################################
-
-# CREATING THE TABLES:
+# CREATING THE TABLES: (Created these tables in local.db file already.)
 
 # with getDatabase() as database:
-#     # with database.cursor() as cursor:
-#     #     cursor.execute("DROP TABLE Users;")
-#     #     database.commit()
-
-#     with database.cursor() as cursor:
-#         cursor.execute("""
-#             CREATE TABLE Users (
-#                 id BIGINT PRIMARY KEY AUTO_INCREMENT,
-#                 created BIGINT, -- milliseconds
-#                 userKey TEXT
-#             )
-#         """)
-#         database.commit()
-
-#     # with database.cursor() as cursor:
-#     #     cursor.execute("DROP TABLE Files;")
-#     #     database.commit()
-    
-#     with database.cursor() as cursor:
-#         cursor.execute("""
-#             CREATE TABLE Files (
-#                 id BIGINT PRIMARY KEY AUTO_INCREMENT,
-#                 userId BIGINT,
-#                 name TEXT,
-#                 created BIGINT, -- milliseconds
-#                 content LONGTEXT
-#             )
-#         """)
-#         database.commit()
+#     cursor = database.cursor()
+#     cursor.execute("""
+#         CREATE TABLE Users (
+#             id INTEGER PRIMARY KEY AUTOINCREMENT,
+#             created INTEGER, -- milliseconds
+#             userKey TEXT
+#         )
+#     """)
+#     database.commit()
+#     cursor = database.cursor()
+#     cursor.execute("""
+#         CREATE TABLE Files (
+#             id INTEGER PRIMARY KEY AUTOINCREMENT,
+#             userId INTEGER,
+#             name TEXT,
+#             created INTEGER, -- milliseconds
+#             content TEXT
+#         )
+#     """)
+#     database.commit()
