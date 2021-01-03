@@ -21,8 +21,8 @@ limiter = flask_limiter.Limiter(app, key_func = get_remote_address)
 
 project = {
     "name": "Class Companion",
-    "website": "https://classcompanion.us.to/",
-    "host": "classcompanion.us.to",
+    "website": "https://classcompanion.io/",
+    "host": "classcompanion.io",
     "ip": "0.0.0.0",
     "port": 1516
 }
